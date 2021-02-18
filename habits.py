@@ -49,6 +49,7 @@ class Task(object):
         """
         Check if task is due.
         """
+        print (self.item['content'], self.due_date, today)
         return self.due_date != today
 
     @property
@@ -115,6 +116,7 @@ class Todoist(object):
         for item in items:
             task = Task(item)
             if task.is_habit():
+                print (task.item['content'])
                 if task.is_due(self.today):
                     task.reset_to_zero(self.today)
                 else:

@@ -61,7 +61,8 @@ class Task(object):
         :return: Current streak
         """
         habit = self.get_habit()
-        return list(int(habit.group(1)), int(habit.group(2)))
+        print (habit.group(1), habit.group(2))
+        return [int(habit.group(1)), int(habit.group(2))]
 
     def set_streak(self, streak):
         """

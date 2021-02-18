@@ -50,7 +50,7 @@ class Task(object):
         Check if task is due.
         """
         print (self.item['content'], self.due_date, today)
-        return today is in self.due_date
+        return today not in self.due_date
 
     @property
     def current_streak(self):

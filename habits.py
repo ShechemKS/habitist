@@ -23,7 +23,7 @@ class Task(object):
         self.item = item
 
     def get_habit(self):
-        return re.search(r'\[day\s(\d+)\]', self.item['content'])
+        return re.search(r'\[day\s(\d+)\/(\d+)\]', self.item['content'])
 
     def is_habit(self):
         """
@@ -61,7 +61,7 @@ class Task(object):
         :return: Current streak
         """
         habit = self.get_habit()
-        return int(habit.group(1))
+        return int(habit.group(1)), int(habit.group(2))
 
     def set_streak(self, streak):
         """
@@ -69,17 +69,21 @@ class Task(object):
         :param streak: Number of days
         :return: None
         """
-        days = '[day {}]'.format(streak)
-        text = re.sub(r'\[day\s(\d+)\]', days, self.item['content'])
+        days = '[day {}/{}]'.format(streak[0], streak[1])
+        print (self.item['content'], days)
+        text = re.sub(r'\[day\s(\d+)\/(\d+)\]', days, self.item['content'])
         self.item.update(content=text)
 
-    def increase(self, n=1):
+    def increase(self):
         """
         Increase streak by n days.
         Default: 1 day
         :param n: Number of days
         """
-        self.set_streak(self.current_streak + n)
+        streak = self.current_streak
+        streak[0] += 1
+        streak[1] += 1
+        self.set_streak(streak)
 
     def decrease(self, today):
         """
@@ -97,6 +101,15 @@ class Task(object):
         self.set_streak(0)
         self.item.update_date_complete(due={'string': 'ev day',
                                             'date': today})
+    
+    def no_change(self):
+        """
+        Maintains current count and increases number of total days
+        """
+        streak = self.current_streak
+        streak[1] += 1
+        self.set_streak(streak)
+        
 
 
 class Todoist(object):
@@ -118,7 +131,7 @@ class Todoist(object):
             if task.is_habit():
                 print (task.item['content'])
                 if task.is_due(self.today):
-                    task.reset_to_zero(self.today)
+                    task.no_change()
                 else:
                     task.increase()
         self.api.commit()

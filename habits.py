@@ -49,7 +49,6 @@ class Task(object):
         """
         Check if task is due.
         """
-        print (self.item['content'], self.due_date, today)
         return today not in self.due_date
 
     @property
@@ -61,7 +60,6 @@ class Task(object):
         :return: Current streak
         """
         habit = self.get_habit()
-        print (habit.group(1), habit.group(2))
         return [int(habit.group(1)), int(habit.group(2))]
 
     def set_streak(self, streak):
@@ -71,7 +69,6 @@ class Task(object):
         :return: None
         """
         days = '[day {}/{}]'.format(streak[0], streak[1])
-        print (self.item['content'], days)
         text = re.sub(r'\[day\s(\d+)\/(\d+)\]', days, self.item['content'])
         self.item.update(content=text)
 
@@ -130,7 +127,6 @@ class Todoist(object):
         for item in items:
             task = Task(item)
             if task.is_habit():
-                print (task.item['content'])
                 if task.is_due(self.today):
                     task.no_change()
                 else:

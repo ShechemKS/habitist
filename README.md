@@ -1,10 +1,14 @@
 # habitist ![habitist](https://github.com/amitness/habitist/workflows/habitist/badge.svg)
 An automation to enable habit tracking in todoist. 
 
-It integrates a habit success rate counter method for habit building into [todoist](http://todoist.com/). Once it's setup, you can forget about it and it works seamlessly.  
-i.e. Habit X [day 4/6]
-Indicating you have done the habit 4 times the last 6 days.
+It integrates a habit tracker for habit building into [todoist](http://todoist.com/). Once it's setup, you can forget about it and it works seamlessly.  
+
 Helps keep track of habits.
+
+Maintains 3 metrics:
+    1. Current Streak (X days)
+    2. Summary (X/Y | Z%)
+    3. Weekly (X/Y)
 
 
 ## Usage
@@ -13,11 +17,11 @@ Helps keep track of habits.
 
 1. You add habits you want to form as task on todoist with schedule `every day`
 
-2. Add `[day 0/0]` to the task
+2. Add the label `habit` to the task
 
-3. If you complete the task, the [day 0/0] will become [day 1/1] at midnight the next day
+3. If you complete the task, the metrics will update at midnight the next day
 
-4. If you fail to complete the task and it becomes overdue, the script will schedule it to today (TODO: Put this functionality back) and set [day 0/0] to [day 0/1] and so on
+4. If you fail to complete the task and it becomes overdue, the script will schedule it to today and reset the streak to 0 days.
 
 ## Setup Instructions
 1. You will need a GitHub account to setup this for your use. Please signup from [here](https://github.com/join) if you don't have an account yet. 
@@ -53,11 +57,6 @@ You can use [https://www.thetimezoneconverter.com](https://www.thetimezoneconver
 7. Ensure that actions are enabled by going to `settings/actions` and enabling all actions
 
 8. If everything is setup correctly, the streak on the tasks will automatically increase/decrease on the next day.
-
-TODO: 
-1. Put back auto rescheduling (Easy)
-2. Integrate comments somehow?
-3. Have an auto reset every so often (Every week? maybe)
 
 ## Forks
 - [srpoyrek: habitist](https://github.com/srpoyrek/habitist) has developed a fork where you can schedule the task to be deleted after reaching a goal. 

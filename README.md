@@ -6,9 +6,12 @@ It integrates a habit tracker for habit building into [todoist](http://todoist.c
 Helps keep track of habits.
 
 Maintains 3 metrics:
+
     1. Current Streak (X days)
     2. Summary (X/Y | Z%)
     3. Weekly (X/Y)
+
+Metrics are updated if you complete a task on an off-day (set in Todoist settings), but not updated if you do not complete a habit on an off-day. Task will be rescheduled either way. 
 
 
 ## Usage

@@ -20,13 +20,12 @@ def get_token():
 
 
 class Task(object):
-    def __init__(self, api, item, notes, weekstart):
+    def __init__(self, api, item, notes):
         self.item = item
         self.id = self.item['id']
         self.notes = notes
         self.api = api
         self.summary, self.week, self.streak = self.parse_notes()
-        self.weekstart = weekstart
 
     def parse_notes(self):
         """
@@ -68,13 +67,13 @@ class Task(object):
         streak.update(content=text)
         self.update_content(text)
     
-    def update_week(self, n = 1):
+    def update_week(self, n = 1, weekstart = False):
         """
         Increases the week note by n days
         """
         week = self.week
         res = re.search(r'(\d+)\/(\d+)', week['content'])
-        if self.weekstart:
+        if weekstart:
             days = '{}/{}'.format(n, 1)
         else:
             cur, tot = int(res.group(1)), int(res.group(2))
@@ -114,31 +113,36 @@ class Task(object):
         """
         return today not in self.due_date
 
-    def increase(self):
+    def increase(self, weekstart = False):
         """
+        arguments:
+            weekstart: Indicates if it is the start of the week to reset the weekly counter
         Increase streak by 1 day.
         Increase overall by 1 day.
         Increase weekly by 1 day and reset on first day of the week
         """
         self.increase_streak()
         self.update_summary(n=1)
-        self.update_week(n=1)
+        self.update_week(n=1, weekstart = weekstart)
     
-    def no_change(self, today):
+    def no_change(self, today, weekstart = False, day_off = False):
         """
+        arguments:
+            today: string indicating the current date - used to reshedule overdue tasks to today
+            weekstart: indicates if it is the start of the week to reset the weekly counter
+            day_off: indicates if it is an off day to not reset the counters
         Maintains current count and increases number of total days
         """
-        self.reset_streak()
-        self.update_summary(n=0)
-        self.update_week(n=0)
+        if not day_off:
+            self.reset_streak()
+            self.update_summary(n=0)
+            self.update_week(n=0, weekstart=weekstart)
         due_date = self.item['due'].get('date')
         if 'T' in due_date:
             time = due_date.split('T')[1]
             today = today + 'T' + time
         self.item.update_date_complete(due={'string': self.item['due'].get('string'),
                                             'date': today})
-        
-
 
 class Todoist(object):
     def __init__(self):
@@ -149,7 +153,6 @@ class Todoist(object):
         assert (len(habit_label_ids)==1)
         self.habit_label_id = habit_label_ids[0]
         self.habits = self.get_habits()
-        print (self.habits)
         self.get_datetime()
         
 
@@ -157,7 +160,8 @@ class Todoist(object):
         timezone = self.api.state['user']['tz_info']['timezone']
         tz_location = tz.gettz(timezone)
         now = datetime.now(tz=tz_location)
-        self.weekstart = datetime.weekday(now) == self.api.state['user']['start_day'] #Checks if yesterday was the week start day
+        self.weekstart = datetime.weekday(now) == self.api.state['user']['start_day']%7 #Checks if yesterday was the week start day
+        self.off_day = datetime.weekday(now) in [i%7 for i in self.api.state['user']['days_off']] #Checks if yesterday was an off day
         self.today = now.strftime(TODOIST_DATE_FORMAT)
 
     def get_habits(self):
@@ -170,11 +174,11 @@ class Todoist(object):
     def update_habit(self):
         for item in self.habits:
             notes = [note for note in self.api.state['notes'] if note['item_id'] == item['id']]
-            task = Task(self.api, item, notes, self.weekstart)
+            task = Task(self.api, item, notes)
             if task.is_due(self.today):
-                task.no_change(self.today)
+                task.no_change(self.today, self.weekstart, self.off_day)
             else:
-                task.increase()
+                task.increase(self.weekstart)
         self.api.commit()
 
 

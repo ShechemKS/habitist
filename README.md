@@ -16,7 +16,7 @@ Metrics are updated if you complete a task on an off-day (set in Todoist setting
 
 ## Usage
 
-![Habitist Screenshot](https://i.imgur.com/q4h2QGv.png)
+![Habitist Screenshot](screenshot.png)
 
 1. You add habits you want to form as task on todoist with schedule `every day`
 

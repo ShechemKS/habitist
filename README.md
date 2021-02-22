@@ -1,5 +1,5 @@
 # habitist ![habitist](https://github.com/amitness/habitist/workflows/habitist/badge.svg)
-An automation to enable habit tracking in todoist. 
+An automation to enable habit tracking in todoist. Original implementation at -[amitness:habitist](https://github.com/amitness/habitist). This version extends the functionality slightly.
 
 It integrates a habit tracker for habit building into [todoist](http://todoist.com/). Once it's setup, you can forget about it and it works seamlessly.  
 
